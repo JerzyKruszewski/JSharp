@@ -32,18 +32,31 @@ namespace JSharp
 
         public SyntaxTree Parse()
         {
-            IExpressionSyntax expression = ParseExpression();
+            IExpressionSyntax expression = ParseTerm();
             SyntaxToken endOfFile = Match(TokenType.EndOfFileToken);
             return new SyntaxTree(_errors, expression, endOfFile);
         }
 
-        private IExpressionSyntax ParseExpression()
+        private IExpressionSyntax ParseTerm()
+        {
+            IExpressionSyntax left = ParseFactor();
+
+            while (Current.TokenType == TokenType.PlusToken ||
+                   Current.TokenType == TokenType.MinusToken)
+            {
+                SyntaxToken operatorToken = NextToken();
+                IExpressionSyntax right = ParseFactor();
+                left = new BinaryExpressionSyntax(left, operatorToken, right);
+            }
+
+            return left;
+        }
+
+        private IExpressionSyntax ParseFactor()
         {
             IExpressionSyntax left = ParsePrimaryExpression();
 
-            while (Current.TokenType == TokenType.PlusToken ||
-                   Current.TokenType == TokenType.MinusToken ||
-                   Current.TokenType == TokenType.StarToken ||
+            while (Current.TokenType == TokenType.StarToken ||
                    Current.TokenType == TokenType.SlashToken)
             {
                 SyntaxToken operatorToken = NextToken();
@@ -56,6 +69,17 @@ namespace JSharp
 
         private IExpressionSyntax ParsePrimaryExpression()
         {
+            if (Current.TokenType == TokenType.OpenParenthesesToken)
+            {
+                SyntaxToken openToken = NextToken();
+                IExpressionSyntax expression = ParseTerm();
+                SyntaxToken closeToken = Match(TokenType.CloseParenthesesToken);
+
+                return new ParenthesizedExpressionSyntax(openParenthesesToken: openToken,
+                                                         expression: expression,
+                                                         closeParenthesesToken: closeToken);
+            }
+
             return new NumberExpressionSyntax(Match(TokenType.NumberToken));
         }
 

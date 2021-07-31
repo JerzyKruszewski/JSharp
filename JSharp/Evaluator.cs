@@ -38,6 +38,11 @@ namespace JSharp
                 return PerformOperation(left, binary.OperatorToken.TokenType, right);
             }
 
+            if (expression is ParenthesizedExpressionSyntax parenthesized)
+            {
+                return EvaluateExpression(parenthesized.Expression);
+            }
+
             throw new Exception($"Unexpected expression {expression.TokenType}");
         }
 

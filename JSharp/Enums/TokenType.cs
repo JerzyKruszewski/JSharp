@@ -19,6 +19,7 @@ namespace JSharp.Enums
         CloseParenthesesToken = 8,
         BadToken = 9,
         NumberExpression = 10,
-        BinaryExpression = 11
+        BinaryExpression = 11,
+        ParenthesizedExpression = 12
     }
 }
