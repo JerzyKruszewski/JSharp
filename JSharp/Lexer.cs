@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-// C# but with mandatory Object Calisthenics
+// C# but with mandatory Object Calisthenics (well... mostly...)
 namespace JSharp
 {
     public class Lexer
@@ -36,63 +36,57 @@ namespace JSharp
 
             if (char.IsDigit(Current))
             {
-                int startPos = _position;
-
-                while (char.IsDigit(Current))
-                {
-                    Next();
-                }
-
-                int length = _position - startPos;
-
-                string text = _text.Substring(startPos, length);
-                _ = int.TryParse(text, out int value);
-
-                return new SyntaxToken(TokenType.NumberToken, startPos, text, value);
+                return HandleDigit();
             }
 
             if (char.IsWhiteSpace(Current))
             {
-                int startPos = _position;
-
-                while (char.IsWhiteSpace(Current))
-                {
-                    Next();
-                }
-
-                int length = _position - startPos;
-
-                string text = _text.Substring(startPos, length);
-
-                return new SyntaxToken(TokenType.WhiteSpaceToken, startPos, text, null);
+                return HandleWhiteSpace();
             }
 
-            if (Current == '+')
+            return Current switch
             {
-                return new SyntaxToken(TokenType.PlusToken, _position++, "+", null);
-            }
-            if (Current == '-')
+                '+' => new SyntaxToken(TokenType.PlusToken, _position++, "+", null),
+                '-' => new SyntaxToken(TokenType.MinusToken, _position++, "-", null),
+                '*' => new SyntaxToken(TokenType.StarToken, _position++, "*", null),
+                '/' => new SyntaxToken(TokenType.SlashToken, _position++, "/", null),
+                '(' => new SyntaxToken(TokenType.OpenParenthesesToken, _position++, "(", null),
+                ')' => new SyntaxToken(TokenType.CloseParenthesesToken, _position++, ")", null),
+                _ => new SyntaxToken(TokenType.BadToken, _position++, _text.Substring(_position - 1, 1), null)
+            };
+        }
+
+        private SyntaxToken HandleDigit()
+        {
+            int startPos = _position;
+
+            while (char.IsDigit(Current))
             {
-                return new SyntaxToken(TokenType.MinusToken, _position++, "-", null);
-            }
-            if (Current == '*')
-            {
-                return new SyntaxToken(TokenType.StarToken, _position++, "*", null);
-            }
-            if (Current == '/')
-            {
-                return new SyntaxToken(TokenType.SlashToken, _position++, "/", null);
-            }
-            if (Current == '(')
-            {
-                return new SyntaxToken(TokenType.OpenParenthesesToken, _position++, "(", null);
-            }
-            if (Current == ')')
-            {
-                return new SyntaxToken(TokenType.CloseParenthesesToken, _position++, ")", null);
+                Next();
             }
 
-            return new SyntaxToken(TokenType.BadToken, _position++, _text.Substring(_position - 1, 1), null);
+            int length = _position - startPos;
+
+            string text = _text.Substring(startPos, length);
+            _ = int.TryParse(text, out int value);
+
+            return new SyntaxToken(TokenType.NumberToken, startPos, text, value);
+        }
+
+        private SyntaxToken HandleWhiteSpace()
+        {
+            int startPos = _position;
+
+            while (char.IsWhiteSpace(Current))
+            {
+                Next();
+            }
+
+            int length = _position - startPos;
+
+            string text = _text.Substring(startPos, length);
+
+            return new SyntaxToken(TokenType.WhiteSpaceToken, startPos, text, null);
         }
 
         private void Next()
