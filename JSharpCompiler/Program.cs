@@ -3,6 +3,8 @@ using JSharp.Enums;
 using JSharp.Interfaces;
 using JSharp.Objects;
 using System;
+using System.Globalization;
+using System.Linq;
 
 namespace JSharpCompiler
 {
@@ -18,7 +20,19 @@ namespace JSharpCompiler
             }
 
             Parser parser = new Parser(line);
-            Utilities.PrintTree(parser.ParseExpression());
+            SyntaxTree tree = parser.Parse();
+            Utilities.PrintTree(tree.Root);
+            
+            if (tree.Errors.Any())
+            {
+                Utilities.LogErrors(tree.Errors);
+                return;
+            }
+
+            Evaluator evaluator = new Evaluator(tree.Root);
+
+            Console.WriteLine(evaluator.Evaluate()
+                                       .ToString(CultureInfo.InvariantCulture));
         }
     }
 }

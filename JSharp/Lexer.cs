@@ -13,11 +13,18 @@ namespace JSharp
     {
         private readonly string _text;
         private int _position;
+#if DEBUG
+        private readonly IList<string> _errors = new List<string>();
+#endif
 
         public Lexer(string text)
         {
             _text = text;
         }
+
+#if DEBUG
+        public IEnumerable<string> Errors => _errors;
+#endif
 
         private char Current
         {
@@ -35,6 +42,14 @@ namespace JSharp
             do
             {
                 consumedToken = NextToken();
+
+#if DEBUG
+                if (consumedToken.TokenType == TokenType.BadToken)
+                {
+                    _errors.Add($"LEXER ERROR: {consumedToken.TokenType} '{consumedToken.Text}' at {consumedToken.Position}");
+                }
+#endif
+
                 tokens.Add(consumedToken);
             } while (consumedToken.TokenType != TokenType.EndOfFileToken);
 
@@ -50,6 +65,13 @@ namespace JSharp
             {
                 consumedToken = NextToken();
 
+#if DEBUG
+                if (consumedToken.TokenType == TokenType.BadToken)
+                {
+                    _errors.Add($"LEXER ERROR: {consumedToken.TokenType} '{consumedToken.Text}' at {consumedToken.Position}");
+                }
+#endif
+
                 if (!excludedTokens.Contains(consumedToken.TokenType))
                 {
                     tokens.Add(consumedToken);
@@ -59,7 +81,7 @@ namespace JSharp
             return tokens;
         }
 
-        public SyntaxToken NextToken()
+        private SyntaxToken NextToken()
         {
             if (_position >= _text.Length)
             {
@@ -100,7 +122,11 @@ namespace JSharp
             int length = _position - startPos;
 
             string text = _text.Substring(startPos, length);
-            _ = int.TryParse(text, out int value);
+
+            if (!int.TryParse(text, out int value))
+            {
+                _errors.Add($"LEXER ERROR: Text {text} is not parseable to Int32");
+            }
 
             return new SyntaxToken(TokenType.NumberToken, startPos, text, value);
         }

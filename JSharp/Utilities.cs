@@ -32,5 +32,18 @@ namespace JSharp
                 PrintTree(child, indent, child == lastChild);
             }
         }
+
+        public static void LogErrors(IEnumerable<string> errors)
+        {
+            ConsoleColor color = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+
+            foreach (string error in errors)
+            {
+                Console.WriteLine(error);
+            }
+
+            Console.ForegroundColor = color;
+        }
     }
 }
