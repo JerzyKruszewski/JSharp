@@ -27,6 +27,38 @@ namespace JSharp
             }
         }
 
+        public IList<SyntaxToken> GetAllTokens()
+        {
+            List<SyntaxToken> tokens = new List<SyntaxToken>();
+            SyntaxToken consumedToken;
+
+            do
+            {
+                consumedToken = NextToken();
+                tokens.Add(consumedToken);
+            } while (consumedToken.TokenType != TokenType.EndOfFileToken);
+
+            return tokens;
+        }
+
+        public IList<SyntaxToken> GetFilteredTokens(params TokenType[] excludedTokens)
+        {
+            List<SyntaxToken> tokens = new List<SyntaxToken>();
+            SyntaxToken consumedToken;
+
+            do
+            {
+                consumedToken = NextToken();
+
+                if (!excludedTokens.Contains(consumedToken.TokenType))
+                {
+                    tokens.Add(consumedToken);
+                }
+            } while (consumedToken.TokenType != TokenType.EndOfFileToken);
+
+            return tokens;
+        }
+
         public SyntaxToken NextToken()
         {
             if (_position >= _text.Length)

@@ -1,4 +1,5 @@
 ﻿using JSharp.Enums;
+using JSharp.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace JSharp.Objects
 {
-    public class SyntaxToken
+    public class SyntaxToken : ISyntaxNode
     {
         public SyntaxToken(TokenType tokenType, int position, string text, object value)
         {
@@ -21,5 +22,10 @@ namespace JSharp.Objects
         public int Position { get; }
         public string Text { get; }
         public object Value { get; }
+
+        public IEnumerable<ISyntaxNode> GetChildren()
+        {
+            return Enumerable.Empty<ISyntaxNode>();
+        }
     }
 }

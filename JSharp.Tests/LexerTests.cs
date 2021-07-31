@@ -13,27 +13,17 @@ namespace JSharp.Tests
     public class LexerTests
     {
         [Test]
+        [TestCase(TokenType.EndOfFileToken, "")]
         [TestCase(TokenType.EndOfFileToken, "1 + 2 + 3")]
         [TestCase(TokenType.NumberToken, "1 + 2 + 3")]
         [TestCase(TokenType.PlusToken, "1 + 2 + 3")]
         [TestCase(TokenType.WhiteSpaceToken, "1 + 2 + 3")]
-        public void LexterNextToken_WhenCalledOnEntireString_ContainsCertainToken(TokenType token, string text)
+        public void GetAllTokens_WhenCalledOnEntireString_ContainsCertainToken(TokenType token, string text)
         {
             Lexer lexer = new Lexer(text);
-            List<SyntaxToken> tokens = new List<SyntaxToken>();
 
-            while (true)
-            {
-                SyntaxToken consumedToken = lexer.NextToken();
-                tokens.Add(consumedToken);
-
-                if (consumedToken.TokenType == TokenType.EndOfFileToken)
-                {
-                    break;
-                }
-            }
-
-            Assert.IsTrue(tokens.Any(t => t.TokenType == token));
+            Assert.IsTrue(lexer.GetAllTokens()
+                               .Any(t => t.TokenType == token));
         }
 
         [Test]
@@ -43,23 +33,24 @@ namespace JSharp.Tests
         [TestCase(TokenType.MinusToken, "1 + 2 + 3")]
         [TestCase(TokenType.SlashToken, "1 + 2 + 3")]
         [TestCase(TokenType.OpenParenthesesToken, "1 + 2 + 3")]
-        public void LexterNextToken_WhenCalledOnEntireString_DoesNotContainCertainToken(TokenType token, string text)
+        public void GetAllTokens_WhenCalledOnEntireString_DoesNotContainCertainToken(TokenType token, string text)
         {
             Lexer lexer = new Lexer(text);
-            List<SyntaxToken> tokens = new List<SyntaxToken>();
 
-            while (true)
-            {
-                SyntaxToken consumedToken = lexer.NextToken();
-                tokens.Add(consumedToken);
+            Assert.IsFalse(lexer.GetAllTokens()
+                                .Any(t => t.TokenType == token));
+        }
 
-                if (consumedToken.TokenType == TokenType.EndOfFileToken)
-                {
-                    break;
-                }
-            }
+        [Test]
+        [TestCase("1 + 2 + 3", TokenType.EndOfFileToken)]
+        [TestCase("1 + 2 + 3", TokenType.NumberToken)]
+        [TestCase("1 + 2 + 3", TokenType.NumberToken, TokenType.PlusToken)]
+        public void GetFilteredTokens_WhenCalledOnEntireStringAndExcludedTokens_DoesNotContainAnyExcludedTokens(string text, params TokenType[] excludedTokens)
+        {
+            Lexer lexer = new Lexer(text);
 
-            Assert.IsFalse(tokens.Any(t => t.TokenType == token));
+            Assert.IsFalse(lexer.GetFilteredTokens(excludedTokens)
+                                .Any(t => excludedTokens.Contains(t.TokenType)));
         }
     }
 }
