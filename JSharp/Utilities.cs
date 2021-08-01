@@ -23,7 +23,7 @@ namespace JSharp
 
             Console.WriteLine();
 
-            indent += (isLast) ? "    " : "│   ";
+            indent += (isLast) ? "   " : "│  ";
 
             ISyntaxNode lastChild = node.GetChildren().LastOrDefault();
 
@@ -35,7 +35,6 @@ namespace JSharp
 
         public static void LogErrors(IEnumerable<string> errors)
         {
-            ConsoleColor color = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.DarkRed;
 
             foreach (string error in errors)
@@ -43,7 +42,7 @@ namespace JSharp
                 Console.WriteLine(error);
             }
 
-            Console.ForegroundColor = color;
+            Console.ResetColor();
         }
     }
 }

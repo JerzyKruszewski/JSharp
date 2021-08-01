@@ -32,39 +32,38 @@ namespace JSharp
 
         public SyntaxTree Parse()
         {
-            IExpressionSyntax expression = ParseTerm();
-            SyntaxToken endOfFile = Match(TokenType.EndOfFileToken);
+            IExpressionSyntax expression = ParseExpression();
+            SyntaxToken endOfFile = MatchToken(TokenType.EndOfFileToken);
             return new SyntaxTree(_errors, expression, endOfFile);
         }
 
-        private IExpressionSyntax ParseTerm()
-        {
-            IExpressionSyntax left = ParseFactor();
-
-            while (Current.TokenType == TokenType.PlusToken ||
-                   Current.TokenType == TokenType.MinusToken)
-            {
-                SyntaxToken operatorToken = NextToken();
-                IExpressionSyntax right = ParseFactor();
-                left = new BinaryExpressionSyntax(left, operatorToken, right);
-            }
-
-            return left;
-        }
-
-        private IExpressionSyntax ParseFactor()
+        private IExpressionSyntax ParseExpression(int parentPrecedence = 0)
         {
             IExpressionSyntax left = ParsePrimaryExpression();
 
-            while (Current.TokenType == TokenType.StarToken ||
-                   Current.TokenType == TokenType.SlashToken)
+            while (true)
             {
+                int precedence = GetBinaryOperatorPrecedence(Current.TokenType);
+
+                if (precedence == 0 || precedence <= parentPrecedence)
+                {
+                    return left;
+                }
+
                 SyntaxToken operatorToken = NextToken();
-                IExpressionSyntax right = ParsePrimaryExpression();
+                IExpressionSyntax right = ParseExpression(precedence);
                 left = new BinaryExpressionSyntax(left, operatorToken, right);
             }
+        }
 
-            return left;
+        private static int GetBinaryOperatorPrecedence(TokenType token)
+        {
+            return token switch
+            {
+                TokenType.PlusToken or TokenType.MinusToken => 1,
+                TokenType.StarToken or TokenType.SlashToken => 2,
+                _ => 0
+            };
         }
 
         private IExpressionSyntax ParsePrimaryExpression()
@@ -72,15 +71,15 @@ namespace JSharp
             if (Current.TokenType == TokenType.OpenParenthesesToken)
             {
                 SyntaxToken openToken = NextToken();
-                IExpressionSyntax expression = ParseTerm();
-                SyntaxToken closeToken = Match(TokenType.CloseParenthesesToken);
+                IExpressionSyntax expression = ParseExpression();
+                SyntaxToken closeToken = MatchToken(TokenType.CloseParenthesesToken);
 
                 return new ParenthesizedExpressionSyntax(openParenthesesToken: openToken,
                                                          expression: expression,
                                                          closeParenthesesToken: closeToken);
             }
 
-            return new NumberExpressionSyntax(Match(TokenType.NumberToken));
+            return new LiteralExpressionSyntax(MatchToken(TokenType.NumberToken));
         }
 
         private SyntaxToken Peek(int offset)
@@ -95,7 +94,7 @@ namespace JSharp
             return _tokens[index];
         }
 
-        private SyntaxToken Match(TokenType token)
+        private SyntaxToken MatchToken(TokenType token)
         {
             if (Current.TokenType == token)
             {

@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 
 namespace JSharp.Objects
 {
-    public class NumberExpressionSyntax : IExpressionSyntax
+    public class LiteralExpressionSyntax : IExpressionSyntax
     {
-        public NumberExpressionSyntax(SyntaxToken numberToken)
+        public LiteralExpressionSyntax(SyntaxToken numberToken)
         {
             NumberToken = numberToken;
         }
 
-        public TokenType TokenType => TokenType.NumberExpression;
+        public TokenType TokenType => TokenType.LiteralExpression;
 
         public SyntaxToken NumberToken { get; }
 

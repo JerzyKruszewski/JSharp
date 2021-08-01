@@ -25,7 +25,7 @@ namespace JSharp
 
         private double EvaluateExpression(IExpressionSyntax expression)
         {
-            if (expression is NumberExpressionSyntax number)
+            if (expression is LiteralExpressionSyntax number)
             {
                 return Convert.ToDouble(number.NumberToken.Value);
             }
