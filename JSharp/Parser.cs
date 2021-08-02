@@ -39,11 +39,11 @@ namespace JSharp
 
         private IExpressionSyntax ParseExpression(int parentPrecedence = 0)
         {
-            IExpressionSyntax left = ParsePrimaryExpression();
+            IExpressionSyntax left = HandleUnaryExpression(parentPrecedence);
 
             while (true)
             {
-                int precedence = GetBinaryOperatorPrecedence(Current.TokenType);
+                int precedence = Current.TokenType.GetBinaryOperatorPrecedence();
 
                 if (precedence == 0 || precedence <= parentPrecedence)
                 {
@@ -56,14 +56,18 @@ namespace JSharp
             }
         }
 
-        private static int GetBinaryOperatorPrecedence(TokenType token)
+        private IExpressionSyntax HandleUnaryExpression(int parentPrecedence)
         {
-            return token switch
+            int unaryPrecedence = Current.TokenType.GetUnaryOperatorPrecedence();
+
+            if (unaryPrecedence != 0 && unaryPrecedence >= parentPrecedence)
             {
-                TokenType.PlusToken or TokenType.MinusToken => 1,
-                TokenType.StarToken or TokenType.SlashToken => 2,
-                _ => 0
-            };
+                SyntaxToken oparatorToken = NextToken();
+                IExpressionSyntax operand = ParseExpression(unaryPrecedence);
+                return new UnaryExpressionSyntax(oparatorToken, operand);
+            }
+
+            return ParsePrimaryExpression();
         }
 
         private IExpressionSyntax ParsePrimaryExpression()

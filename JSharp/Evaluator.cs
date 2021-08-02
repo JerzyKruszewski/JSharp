@@ -30,6 +30,13 @@ namespace JSharp
                 return Convert.ToDouble(number.NumberToken.Value);
             }
 
+            if (expression is UnaryExpressionSyntax unary)
+            {
+                return (unary.OperatorToken.TokenType == TokenType.MinusToken) ?
+                       -EvaluateExpression(unary.Operand) :
+                       EvaluateExpression(unary.Operand);
+            }
+
             if (expression is BinaryExpressionSyntax binary)
             {
                 double left = EvaluateExpression(binary.Left);

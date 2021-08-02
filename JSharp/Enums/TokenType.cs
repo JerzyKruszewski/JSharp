@@ -20,6 +20,7 @@ namespace JSharp.Enums
         BadToken = 9,
         LiteralExpression = 10,
         BinaryExpression = 11,
-        ParenthesizedExpression = 12
+        ParenthesizedExpression = 12,
+        UnaryExpression = 13
     }
 }
