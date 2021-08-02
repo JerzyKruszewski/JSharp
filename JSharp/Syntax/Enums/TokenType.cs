@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JSharp.Enums
+namespace JSharp.Syntax.Enums
 {
     public enum TokenType
     {

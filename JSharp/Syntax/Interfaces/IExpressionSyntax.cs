@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JSharp.Interfaces
+namespace JSharp.Syntax.Interfaces
 {
     public interface IExpressionSyntax : ISyntaxNode
     {

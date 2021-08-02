@@ -1,7 +1,8 @@
 ﻿using JSharp;
-using JSharp.Enums;
-using JSharp.Interfaces;
-using JSharp.Objects;
+using JSharp.Syntax;
+using JSharp.Syntax.Enums;
+using JSharp.Syntax.Interfaces;
+using JSharp.Syntax.Objects;
 using System;
 using System.Globalization;
 using System.Linq;

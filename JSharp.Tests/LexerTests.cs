@@ -1,5 +1,6 @@
-﻿using JSharp.Enums;
-using JSharp.Objects;
+﻿using JSharp.Syntax.Enums;
+using JSharp.Syntax.Objects;
+using JSharp.Syntax;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;

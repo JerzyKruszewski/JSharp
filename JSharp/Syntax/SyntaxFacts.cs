@@ -1,11 +1,11 @@
-﻿using JSharp.Enums;
+﻿using JSharp.Syntax.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JSharp
+namespace JSharp.Syntax
 {
     public static class SyntaxFacts
     {

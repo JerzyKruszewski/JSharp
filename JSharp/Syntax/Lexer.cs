@@ -1,5 +1,5 @@
-﻿using JSharp.Enums;
-using JSharp.Objects;
+﻿using JSharp.Syntax.Enums;
+using JSharp.Syntax.Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 // C# but with mandatory Object Calisthenics (well... mostly...)
-namespace JSharp
+namespace JSharp.Syntax
 {
     public class Lexer
     {

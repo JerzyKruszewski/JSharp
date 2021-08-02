@@ -1,13 +1,13 @@
-﻿using JSharp.Enums;
-using JSharp.Interfaces;
-using JSharp.Objects;
+﻿using JSharp.Syntax.Enums;
+using JSharp.Syntax.Interfaces;
+using JSharp.Syntax.Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JSharp
+namespace JSharp.Syntax
 {
     public class Parser
     {

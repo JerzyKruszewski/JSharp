@@ -1,4 +1,5 @@
-﻿using JSharp.Objects;
+﻿using JSharp.Syntax.Objects;
+using JSharp.Syntax;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
