@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JSharp.Tests
+namespace JSharp.Tests.SyntaxTests
 {
     [TestFixture]
     public class LexerTests
