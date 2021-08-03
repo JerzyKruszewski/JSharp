@@ -1,4 +1,7 @@
-﻿using JSharp.Syntax.Enums;
+﻿using JSharp.Binding.Enums;
+using JSharp.Binding.Interfaces;
+using JSharp.Binding.Objects;
+using JSharp.Syntax.Enums;
 using JSharp.Syntax.Interfaces;
 using JSharp.Syntax.Objects;
 using System;
@@ -11,71 +14,58 @@ namespace JSharp
 {
     public class Evaluator
     {
-        private readonly IExpressionSyntax _root;
+        private readonly IBoundExpression _root;
 
-        public Evaluator(IExpressionSyntax root)
+        public Evaluator(IBoundExpression root)
         {
             _root = root;
         }
 
-        public double Evaluate()
+        public object Evaluate()
         {
             return EvaluateExpression(_root);
         }
 
-        private double EvaluateExpression(IExpressionSyntax expression)
+        private object EvaluateExpression(IBoundExpression expression)
         {
-            if (expression is LiteralExpressionSyntax number)
+            if (expression is BoundLiteralExpression number)
             {
-                return Convert.ToDouble(number.NumberToken.Value);
+                return number.Value;
             }
 
-            if (expression is UnaryExpressionSyntax unary)
+            if (expression is BoundUnaryExpression unary)
             {
-                return (unary.OperatorToken.TokenType == TokenType.MinusToken) ?
-                       -EvaluateExpression(unary.Operand) :
+                return (unary.OperatorType == BoundUnaryOperatorType.Negation) ?
+                       -Convert.ToDouble(EvaluateExpression(unary.Operand)) :
                        EvaluateExpression(unary.Operand);
             }
 
-            if (expression is BinaryExpressionSyntax binary)
+            if (expression is BoundBinaryExpression binary)
             {
-                double left = EvaluateExpression(binary.Left);
-                double right = EvaluateExpression(binary.Right);
+                double left = Convert.ToDouble(EvaluateExpression(binary.Left));
+                double right = Convert.ToDouble(EvaluateExpression(binary.Right));
 
-                return PerformOperation(left, binary.OperatorToken.TokenType, right);
+                return PerformOperation(left, binary.OperatorType, right);
             }
 
-            if (expression is ParenthesizedExpressionSyntax parenthesized)
-            {
-                return EvaluateExpression(parenthesized.Expression);
-            }
+            //if (expression is ParenthesizedExpressionSyntax parenthesized)
+            //{
+            //    return EvaluateExpression(parenthesized.Expression);
+            //}
 
-            throw new Exception($"Unexpected expression {expression.TokenType}");
+            throw new Exception($"Unexpected expression {expression.BoundNode}");
         }
 
-        private double PerformOperation(double left, TokenType operatorToken, double right)
+        private double PerformOperation(double left, BoundBinaryOperatorType operatorToken, double right)
         {
-            if (operatorToken == TokenType.PlusToken)
+            return operatorToken switch
             {
-                return left + right;
-            }
-
-            if (operatorToken == TokenType.MinusToken)
-            {
-                return left - right;
-            }
-
-            if (operatorToken == TokenType.StarToken)
-            {
-                return left * right;
-            }
-
-            if (operatorToken == TokenType.SlashToken)
-            {
-                return left / right;
-            }
-
-            throw new Exception($"Unexpected binary operator: {operatorToken}");
+                BoundBinaryOperatorType.Addition => left + right,
+                BoundBinaryOperatorType.Subtraction => left - right,
+                BoundBinaryOperatorType.Multiplication => left * right,
+                BoundBinaryOperatorType.Division => left / right,
+                _ => throw new Exception($"Unexpected binary operator: {operatorToken}")
+            };
         }
     }
 }

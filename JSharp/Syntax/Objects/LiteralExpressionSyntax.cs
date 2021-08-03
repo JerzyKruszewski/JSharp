@@ -10,18 +10,26 @@ namespace JSharp.Syntax.Objects
 {
     public class LiteralExpressionSyntax : IExpressionSyntax
     {
-        public LiteralExpressionSyntax(SyntaxToken numberToken)
+        public LiteralExpressionSyntax(SyntaxToken token)
+            : this(token, token.Value)
         {
-            NumberToken = numberToken;
+
+        }
+
+        public LiteralExpressionSyntax(SyntaxToken token, object value)
+        {
+            Token = token;
+            Value = value;
         }
 
         public TokenType TokenType => TokenType.LiteralExpression;
 
-        public SyntaxToken NumberToken { get; }
+        public SyntaxToken Token { get; }
+        public object Value { get; }
 
         public IEnumerable<ISyntaxNode> GetChildren()
         {
-            yield return NumberToken;
+            yield return Token;
         }
     }
 }

@@ -21,6 +21,9 @@ namespace JSharp.Syntax.Enums
         LiteralExpression = 10,
         BinaryExpression = 11,
         ParenthesizedExpression = 12,
-        UnaryExpression = 13
+        UnaryExpression = 13,
+        TrueKeyword = 14,
+        FalseKeyword = 15,
+        IdentifierToken = 16
     }
 }

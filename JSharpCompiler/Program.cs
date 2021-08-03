@@ -1,9 +1,12 @@
 ﻿using JSharp;
+using JSharp.Binding;
+using JSharp.Binding.Interfaces;
 using JSharp.Syntax;
 using JSharp.Syntax.Enums;
 using JSharp.Syntax.Interfaces;
 using JSharp.Syntax.Objects;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
@@ -22,18 +25,21 @@ namespace JSharpCompiler
 
             Parser parser = new Parser(line);
             SyntaxTree tree = parser.Parse();
+            Binder binder = new Binder();
+            IBoundExpression boundExpression = binder.BindExpression(tree.Root);
             Utilities.PrintTree(tree.Root);
+
+            IEnumerable<string> errors = tree.Errors.Concat(binder.Errors);
             
-            if (tree.Errors.Any())
+            if (errors.Any())
             {
-                Utilities.LogErrors(tree.Errors);
+                Utilities.LogErrors(errors);
                 return;
             }
 
-            Evaluator evaluator = new Evaluator(tree.Root);
+            Evaluator evaluator = new Evaluator(boundExpression);
 
-            Console.WriteLine(evaluator.Evaluate()
-                                       .ToString(CultureInfo.InvariantCulture));
+            Console.WriteLine(evaluator.Evaluate());
         }
     }
 }

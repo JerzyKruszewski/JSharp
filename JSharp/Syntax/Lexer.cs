@@ -98,6 +98,11 @@ namespace JSharp.Syntax
                 return HandleWhiteSpace();
             }
 
+            if (char.IsLetter(Current))
+            {
+                return HandleLetter();
+            }
+
             return Current switch
             {
                 '+' => new SyntaxToken(TokenType.PlusToken, _position++, "+", null),
@@ -145,6 +150,22 @@ namespace JSharp.Syntax
             string text = _text.Substring(startPos, length);
 
             return new SyntaxToken(TokenType.WhiteSpaceToken, startPos, text, null);
+        }
+
+        private SyntaxToken HandleLetter()
+        {
+            int startPos = _position;
+
+            while (char.IsLetter(Current))
+            {
+                Next();
+            }
+
+            int length = _position - startPos;
+
+            string text = _text.Substring(startPos, length);
+
+            return new SyntaxToken(SyntaxFacts.GetKeyword(text), startPos, text, null);
         }
 
         private void Next()

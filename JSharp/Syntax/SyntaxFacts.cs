@@ -27,5 +27,15 @@ namespace JSharp.Syntax
                 _ => 0
             };
         }
+
+        public static TokenType GetKeyword(string text)
+        {
+            return text switch
+            {
+                "true" => TokenType.TrueKeyword,
+                "false" => TokenType.FalseKeyword,
+                _ => throw new ArgumentException($"Unknown keyword: {text}")
+            };
+        }
     }
 }

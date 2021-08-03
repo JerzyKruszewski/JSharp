@@ -72,18 +72,29 @@ namespace JSharp.Syntax
 
         private IExpressionSyntax ParsePrimaryExpression()
         {
-            if (Current.TokenType == TokenType.OpenParenthesesToken)
+            switch (Current.TokenType)
             {
-                SyntaxToken openToken = NextToken();
-                IExpressionSyntax expression = ParseExpression();
-                SyntaxToken closeToken = MatchToken(TokenType.CloseParenthesesToken);
+                case TokenType.OpenParenthesesToken:
+                {
+                    SyntaxToken openToken = NextToken();
+                    IExpressionSyntax expression = ParseExpression();
+                    SyntaxToken closeToken = MatchToken(TokenType.CloseParenthesesToken);
 
-                return new ParenthesizedExpressionSyntax(openParenthesesToken: openToken,
-                                                         expression: expression,
-                                                         closeParenthesesToken: closeToken);
+                    return new ParenthesizedExpressionSyntax(openParenthesesToken: openToken,
+                                                             expression: expression,
+                                                             closeParenthesesToken: closeToken);
+                }
+                case TokenType.TrueKeyword:
+                case TokenType.FalseKeyword:
+                {
+                    SyntaxToken keywordToken = NextToken();
+                    bool value = keywordToken.TokenType == TokenType.TrueKeyword;
+
+                    return new LiteralExpressionSyntax(keywordToken, value);
+                }
+                default:
+                    return new LiteralExpressionSyntax(MatchToken(TokenType.NumberToken));
             }
-
-            return new LiteralExpressionSyntax(MatchToken(TokenType.NumberToken));
         }
 
         private SyntaxToken Peek(int offset)
