@@ -9,6 +9,7 @@ namespace JSharp.Binding.Enums
     public enum BoundUnaryOperatorType
     {
         Identity = 0,
-        Negation = 1
+        Negation = 1,
+        LogicalNegation = 2
     }
 }

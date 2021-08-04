@@ -67,6 +67,15 @@ namespace JSharp.Binding
         
         private BoundUnaryOperatorType? BindUnaryOperator(TokenType tokenType, Type type)
         {
+            if (type == typeof(bool))
+            {
+                return tokenType switch
+                {
+                    TokenType.BangToken => BoundUnaryOperatorType.LogicalNegation,
+                    _ => throw new ArgumentException($"Unexpected boolean token type {tokenType} for type {type}")
+                };
+            }
+
             if (type != typeof(double) && type != typeof(int))
             {
                 _errors.Add($"BINDER ERROR: Unknown {nameof(type)} ({type})");
@@ -83,6 +92,16 @@ namespace JSharp.Binding
 
         private BoundBinaryOperatorType? BindBinaryOperator(TokenType tokenType, Type leftType, Type rightType)
         {
+            if (leftType == typeof(bool) && rightType == typeof(bool))
+            {
+                return tokenType switch
+                {
+                    TokenType.AmpersandAmpersandToken => BoundBinaryOperatorType.LogicalAnd,
+                    TokenType.PipePipeToken => BoundBinaryOperatorType.LogicalOr,
+                    _ => throw new ArgumentException($"Unexpected boolean token type {tokenType} for type {leftType}")
+                };
+            }
+
             if ((leftType != typeof(double) && leftType != typeof(int)) ||
                 (rightType != typeof(double) && rightType != typeof(int)))
             {

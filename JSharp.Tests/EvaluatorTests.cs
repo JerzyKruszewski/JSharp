@@ -37,5 +37,26 @@ namespace JSharp.Tests
 
             Assert.AreEqual(expected, actual, epsilon);
         }
+
+        [Test]
+        [TestCase(true, "true && true")]
+        [TestCase(false, "true && false")]
+        [TestCase(false, "false && true")]
+        [TestCase(false, "false && false")]
+        [TestCase(true, "true || true")]
+        [TestCase(true, "true || false")]
+        [TestCase(true, "false || true")]
+        [TestCase(false, "false || false")]
+        public void Evaluate_WhenCalledWithLogicalExpression_ReturnResult(bool expected, string text)
+        {
+            Parser parser = new Parser(text);
+            SyntaxTree tree = parser.Parse();
+            Binder binder = new Binder();
+            IBoundExpression boundExpression = binder.BindExpression(tree.Root);
+
+            bool actual = (bool)(new Evaluator(boundExpression).Evaluate());
+
+            Assert.AreEqual(expected, actual);
+        }
     }
 }

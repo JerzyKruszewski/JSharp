@@ -8,22 +8,32 @@ namespace JSharp.Syntax.Enums
 {
     public enum TokenType
     {
-        EndOfFileToken = 0,
-        NumberToken = 1,
-        WhiteSpaceToken = 2,
-        PlusToken = 3,
-        MinusToken = 4,
-        StarToken = 5,
-        SlashToken = 6,
-        OpenParenthesesToken = 7,
-        CloseParenthesesToken = 8,
-        BadToken = 9,
-        LiteralExpression = 10,
-        BinaryExpression = 11,
-        ParenthesizedExpression = 12,
-        UnaryExpression = 13,
-        TrueKeyword = 14,
-        FalseKeyword = 15,
-        IdentifierToken = 16
+        // Special
+        EndOfFileToken,
+        BadToken,
+
+        //Tokens
+        NumberToken,
+        WhiteSpaceToken,
+        PlusToken,
+        MinusToken,
+        StarToken,
+        SlashToken,
+        OpenParenthesesToken,
+        CloseParenthesesToken,
+        IdentifierToken,
+        BangToken,
+        AmpersandAmpersandToken,
+        PipePipeToken,
+
+        //Keywords
+        TrueKeyword,
+        FalseKeyword,
+
+        //Expressions
+        LiteralExpression,
+        BinaryExpression,
+        ParenthesizedExpression,
+        UnaryExpression
     }
 }

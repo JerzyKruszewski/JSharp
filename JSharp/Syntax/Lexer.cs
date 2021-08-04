@@ -26,12 +26,14 @@ namespace JSharp.Syntax
         public IEnumerable<string> Errors => _errors;
 #endif
 
-        private char Current
+        private char Current => Peek(0);
+
+        private char LookAhead => Peek(1);
+
+        private char Peek(int offset)
         {
-            get
-            {
-                return (_position >= _text.Length || _position < 0) ? '\0' : _text[_position];
-            }
+            int index = _position + offset;
+            return (index >= _text.Length) ? '\0' : _text[index];
         }
 
         public IList<SyntaxToken> GetAllTokens()
@@ -103,6 +105,16 @@ namespace JSharp.Syntax
                 return HandleLetter();
             }
 
+            if (Current == '&' && LookAhead == '&')
+            {
+                return new SyntaxToken(TokenType.AmpersandAmpersandToken, _position += 2, "&&", null);
+            }
+
+            if (Current == '|' && LookAhead == '|')
+            {
+                return new SyntaxToken(TokenType.PipePipeToken, _position += 2, "||", null);
+            }
+
             return Current switch
             {
                 '+' => new SyntaxToken(TokenType.PlusToken, _position++, "+", null),
@@ -111,6 +123,7 @@ namespace JSharp.Syntax
                 '/' => new SyntaxToken(TokenType.SlashToken, _position++, "/", null),
                 '(' => new SyntaxToken(TokenType.OpenParenthesesToken, _position++, "(", null),
                 ')' => new SyntaxToken(TokenType.CloseParenthesesToken, _position++, ")", null),
+                '!' => new SyntaxToken(TokenType.BangToken, _position++, "!", null),
                 _ => new SyntaxToken(TokenType.BadToken, _position++, _text.Substring(_position - 1, 1), null)
             };
         }

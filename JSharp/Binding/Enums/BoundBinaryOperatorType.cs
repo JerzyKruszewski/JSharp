@@ -11,6 +11,10 @@ namespace JSharp.Binding.Enums
         Addition,
         Subtraction,
         Multiplication,
-        Division
+        Division,
+
+        //boolean
+        LogicalAnd,
+        LogicalOr
     }
 }

@@ -35,15 +35,19 @@ namespace JSharp
 
             if (expression is BoundUnaryExpression unary)
             {
-                return (unary.OperatorType == BoundUnaryOperatorType.Negation) ?
-                       -Convert.ToDouble(EvaluateExpression(unary.Operand)) :
-                       EvaluateExpression(unary.Operand);
+                return unary.OperatorType switch
+                {
+                    BoundUnaryOperatorType.Identity => EvaluateExpression(unary.Operand),
+                    BoundUnaryOperatorType.Negation => -Convert.ToDouble(EvaluateExpression(unary.Operand)),
+                    BoundUnaryOperatorType.LogicalNegation => !((bool)EvaluateExpression(unary.Operand)),
+                    _ => throw new Exception($"Unexpected unary operator type <{unary.OperatorType}>")
+                };
             }
 
             if (expression is BoundBinaryExpression binary)
             {
-                double left = Convert.ToDouble(EvaluateExpression(binary.Left));
-                double right = Convert.ToDouble(EvaluateExpression(binary.Right));
+                object left = EvaluateExpression(binary.Left);
+                object right = EvaluateExpression(binary.Right);
 
                 return PerformOperation(left, binary.OperatorType, right);
             }
@@ -56,14 +60,16 @@ namespace JSharp
             throw new Exception($"Unexpected expression {expression.BoundNode}");
         }
 
-        private double PerformOperation(double left, BoundBinaryOperatorType operatorToken, double right)
+        private object PerformOperation(object left, BoundBinaryOperatorType operatorToken, object right)
         {
             return operatorToken switch
             {
-                BoundBinaryOperatorType.Addition => left + right,
-                BoundBinaryOperatorType.Subtraction => left - right,
-                BoundBinaryOperatorType.Multiplication => left * right,
-                BoundBinaryOperatorType.Division => left / right,
+                BoundBinaryOperatorType.Addition => Convert.ToDouble(left) + Convert.ToDouble(right),
+                BoundBinaryOperatorType.Subtraction => Convert.ToDouble(left) - Convert.ToDouble(right),
+                BoundBinaryOperatorType.Multiplication => Convert.ToDouble(left) * Convert.ToDouble(right),
+                BoundBinaryOperatorType.Division => Convert.ToDouble(left) / Convert.ToDouble(right),
+                BoundBinaryOperatorType.LogicalAnd => (bool)left && (bool)right,
+                BoundBinaryOperatorType.LogicalOr => (bool)left || (bool)right,
                 _ => throw new Exception($"Unexpected binary operator: {operatorToken}")
             };
         }
