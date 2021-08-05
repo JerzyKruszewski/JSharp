@@ -70,6 +70,8 @@ namespace JSharp
                 BoundBinaryOperatorType.Division => Convert.ToDouble(left) / Convert.ToDouble(right),
                 BoundBinaryOperatorType.LogicalAnd => (bool)left && (bool)right,
                 BoundBinaryOperatorType.LogicalOr => (bool)left || (bool)right,
+                BoundBinaryOperatorType.LogicalEquals => left.Equals(right),
+                BoundBinaryOperatorType.LogicalNotEquals => !left.Equals(right),
                 _ => throw new Exception($"Unexpected binary operator: {operatorToken}")
             };
         }

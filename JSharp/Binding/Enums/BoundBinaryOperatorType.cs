@@ -15,6 +15,8 @@ namespace JSharp.Binding.Enums
 
         //boolean
         LogicalAnd,
-        LogicalOr
+        LogicalOr,
+        LogicalEquals,
+        LogicalNotEquals
     }
 }

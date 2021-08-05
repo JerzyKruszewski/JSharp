@@ -13,8 +13,9 @@ namespace JSharp.Syntax
         {
             return token switch
             {
-                TokenType.StarToken or TokenType.SlashToken => 4,
-                TokenType.PlusToken or TokenType.MinusToken => 3,
+                TokenType.StarToken or TokenType.SlashToken => 5,
+                TokenType.PlusToken or TokenType.MinusToken => 4,
+                TokenType.EqualsEqualsToken or TokenType.BangEqualsToken => 3,
                 TokenType.AmpersandAmpersandToken => 2,
                 TokenType.PipePipeToken => 1,
                 _ => 0
@@ -27,7 +28,7 @@ namespace JSharp.Syntax
             {
                 TokenType.PlusToken or 
                 TokenType.MinusToken or
-                TokenType.BangToken => 5,
+                TokenType.BangToken => 6,
                 _ => 0
             };
         }

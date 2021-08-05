@@ -115,6 +115,16 @@ namespace JSharp.Syntax
                 return new SyntaxToken(TokenType.PipePipeToken, _position += 2, "||", null);
             }
 
+            if (Current == '=' && LookAhead == '=')
+            {
+                return new SyntaxToken(TokenType.EqualsEqualsToken, _position += 2, "==", null);
+            }
+
+            if (Current == '!' && LookAhead == '=')
+            {
+                return new SyntaxToken(TokenType.BangEqualsToken, _position += 2, "!=", null);
+            }
+
             return Current switch
             {
                 '+' => new SyntaxToken(TokenType.PlusToken, _position++, "+", null),

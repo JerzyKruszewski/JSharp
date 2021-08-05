@@ -35,6 +35,10 @@ namespace JSharp.Binding.Objects
         {
             new BoundBinaryOperator(TokenType.AmpersandAmpersandToken, BoundBinaryOperatorType.LogicalAnd, typeof(bool), typeof(bool)),
             new BoundBinaryOperator(TokenType.PipePipeToken, BoundBinaryOperatorType.LogicalOr, typeof(bool), typeof(bool)),
+            new BoundBinaryOperator(TokenType.EqualsEqualsToken, BoundBinaryOperatorType.LogicalEquals, typeof(bool), typeof(bool), typeof(bool)),
+            new BoundBinaryOperator(TokenType.BangEqualsToken, BoundBinaryOperatorType.LogicalNotEquals, typeof(bool), typeof(bool), typeof(bool)),
+            new BoundBinaryOperator(TokenType.EqualsEqualsToken, BoundBinaryOperatorType.LogicalEquals, typeof(int), typeof(int), typeof(bool)),
+            new BoundBinaryOperator(TokenType.BangEqualsToken, BoundBinaryOperatorType.LogicalNotEquals, typeof(int), typeof(int), typeof(bool)),
             new BoundBinaryOperator(TokenType.PlusToken, BoundBinaryOperatorType.Addition, typeof(int), typeof(int)),
             new BoundBinaryOperator(TokenType.MinusToken, BoundBinaryOperatorType.Subtraction, typeof(int), typeof(int)),
             new BoundBinaryOperator(TokenType.StarToken, BoundBinaryOperatorType.Multiplication, typeof(int), typeof(int)),

@@ -42,6 +42,8 @@ namespace JSharp.Tests
         }
 
         [Test]
+        [TestCase(true, "!false")]
+        [TestCase(false, "!true")]
         [TestCase(true, "true && true")]
         [TestCase(false, "true && false")]
         [TestCase(false, "false && true")]
@@ -50,6 +52,23 @@ namespace JSharp.Tests
         [TestCase(true, "true || false")]
         [TestCase(true, "false || true")]
         [TestCase(false, "false || false")]
+        [TestCase(true, "true == true")]
+        [TestCase(false, "true == false")]
+        [TestCase(false, "false == true")]
+        [TestCase(true, "false == false")]
+        [TestCase(false, "true != true")]
+        [TestCase(true, "true != false")]
+        [TestCase(true, "false != true")]
+        [TestCase(false, "false != false")]
+        [TestCase(true, "1 == 1")]
+        [TestCase(true, "-1 == -1")]
+        [TestCase(true, "-1 != 1")]
+        [TestCase(false, "1 != 1")]
+        [TestCase(false, "-1 != -1")]
+        [TestCase(false, "-1 == 1")]
+        [TestCase(true, "2==2==!false")]
+        [TestCase(true, "2==2&&!false")]
+        [TestCase(true, "2==2||!false")]
         public void Evaluate_WhenCalledWithLogicalExpression_ReturnResult(bool expected, string text)
         {
             Parser parser = new Parser(text);

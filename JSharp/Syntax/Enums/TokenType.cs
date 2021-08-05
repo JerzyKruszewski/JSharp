@@ -25,6 +25,8 @@ namespace JSharp.Syntax.Enums
         BangToken,
         AmpersandAmpersandToken,
         PipePipeToken,
+        EqualsEqualsToken,
+        BangEqualsToken,
 
         //Keywords
         TrueKeyword,
