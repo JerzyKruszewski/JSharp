@@ -39,30 +39,30 @@ namespace JSharp.Binding
         private IBoundExpression BindUnaryExpression(UnaryExpressionSyntax syntax)
         {
             IBoundExpression boundOperand = BindExpression(syntax.Operand);
-            BoundUnaryOperatorType? operatorType = BindUnaryOperator(syntax.OperatorToken.TokenType, boundOperand.Type);
+            BoundUnaryOperator boundOperator = BoundUnaryOperator.Bind(syntax.OperatorToken.TokenType, boundOperand.Type);
 
-            if (operatorType is null)
+            if (boundOperator is null)
             {
                 _errors.Add($"BINDER ERROR: Unary oparator '{syntax.OperatorToken.Text}' is not defined for type {boundOperand.Type}");
                 return boundOperand;
             }
 
-            return new BoundUnaryExpression(operatorType.Value, boundOperand);
+            return new BoundUnaryExpression(boundOperator, boundOperand);
         }
 
         private IBoundExpression BindBinaryExpression(BinaryExpressionSyntax syntax)
         {
             IBoundExpression boundLeft = BindExpression(syntax.Left);
             IBoundExpression boundRight = BindExpression(syntax.Right);
-            BoundBinaryOperatorType? operatorType = BindBinaryOperator(syntax.OperatorToken.TokenType, boundLeft.Type, boundRight.Type);
+            BoundBinaryOperator boundOperator = BoundBinaryOperator.Bind(syntax.OperatorToken.TokenType, boundLeft.Type, boundRight.Type);
 
-            if (operatorType is null)
+            if (boundOperator is null)
             {
                 _errors.Add($"BINDER ERROR: Unary oparator '{syntax.OperatorToken.Text}' is not defined for types {boundLeft.Type} or {boundRight.Type}");
                 return boundLeft;
             }
 
-            return new BoundBinaryExpression(boundLeft, operatorType.Value, boundRight);
+            return new BoundBinaryExpression(boundLeft, boundOperator, boundRight);
         }
         
         private BoundUnaryOperatorType? BindUnaryOperator(TokenType tokenType, Type type)
@@ -87,35 +87,6 @@ namespace JSharp.Binding
                 TokenType.PlusToken => BoundUnaryOperatorType.Identity,
                 TokenType.MinusToken => BoundUnaryOperatorType.Negation,
                 _ => throw new ArgumentException($"Unexpected token type {tokenType} which is not parsable {nameof(BoundUnaryOperatorType)}")
-            };
-        }
-
-        private BoundBinaryOperatorType? BindBinaryOperator(TokenType tokenType, Type leftType, Type rightType)
-        {
-            if (leftType == typeof(bool) && rightType == typeof(bool))
-            {
-                return tokenType switch
-                {
-                    TokenType.AmpersandAmpersandToken => BoundBinaryOperatorType.LogicalAnd,
-                    TokenType.PipePipeToken => BoundBinaryOperatorType.LogicalOr,
-                    _ => throw new ArgumentException($"Unexpected boolean token type {tokenType} for type {leftType}")
-                };
-            }
-
-            if ((leftType != typeof(double) && leftType != typeof(int)) ||
-                (rightType != typeof(double) && rightType != typeof(int)))
-            {
-                _errors.Add($"BINDER ERROR: Unknown {nameof(leftType)} ({leftType}) or {nameof(rightType)} ({rightType})");
-                return null;
-            }
-
-            return tokenType switch
-            {
-                TokenType.PlusToken => BoundBinaryOperatorType.Addition,
-                TokenType.MinusToken => BoundBinaryOperatorType.Subtraction,
-                TokenType.StarToken => BoundBinaryOperatorType.Multiplication,
-                TokenType.SlashToken => BoundBinaryOperatorType.Division,
-                _ => throw new ArgumentException($"Unexpected token type {tokenType} which is not parsable {nameof(BoundBinaryOperatorType)}")
             };
         }
     }

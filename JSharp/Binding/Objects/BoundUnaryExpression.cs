@@ -10,15 +10,15 @@ namespace JSharp.Binding.Objects
 {
     public class BoundUnaryExpression : IBoundExpression
     {
-        public BoundUnaryExpression(BoundUnaryOperatorType operatorType, IBoundExpression operand)
+        public BoundUnaryExpression(BoundUnaryOperator boundOperator, IBoundExpression operand)
         {
-            OperatorType = operatorType;
+            BoundOperator = boundOperator;
             Operand = operand;
         }
 
         public BoundNodeType BoundNode => BoundNodeType.UnaryExpression;
-        public Type Type => Operand.Type;
-        public BoundUnaryOperatorType OperatorType { get; }
+        public Type Type => BoundOperator.ReturnType;
+        public BoundUnaryOperator BoundOperator { get; }
         public IBoundExpression Operand { get; }
     }
 }

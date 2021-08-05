@@ -35,12 +35,12 @@ namespace JSharp
 
             if (expression is BoundUnaryExpression unary)
             {
-                return unary.OperatorType switch
+                return unary.BoundOperator.OperatorType switch
                 {
                     BoundUnaryOperatorType.Identity => EvaluateExpression(unary.Operand),
                     BoundUnaryOperatorType.Negation => -Convert.ToDouble(EvaluateExpression(unary.Operand)),
                     BoundUnaryOperatorType.LogicalNegation => !((bool)EvaluateExpression(unary.Operand)),
-                    _ => throw new Exception($"Unexpected unary operator type <{unary.OperatorType}>")
+                    _ => throw new Exception($"Unexpected unary operator type <{unary.BoundOperator}>")
                 };
             }
 
@@ -49,7 +49,7 @@ namespace JSharp
                 object left = EvaluateExpression(binary.Left);
                 object right = EvaluateExpression(binary.Right);
 
-                return PerformOperation(left, binary.OperatorType, right);
+                return PerformOperation(left, binary.BoundOperator.OperatorType, right);
             }
 
             //if (expression is ParenthesizedExpressionSyntax parenthesized)

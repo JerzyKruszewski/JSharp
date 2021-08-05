@@ -10,18 +10,18 @@ namespace JSharp.Binding.Objects
 {
     public class BoundBinaryExpression : IBoundExpression
     {
-        public BoundBinaryExpression(IBoundExpression left, BoundBinaryOperatorType operatorType, IBoundExpression right)
+        public BoundBinaryExpression(IBoundExpression left, BoundBinaryOperator boundOperator, IBoundExpression right)
         {
             Left = left;
-            OperatorType = operatorType;
+            BoundOperator = boundOperator;
             Right = right;
         }
 
         public BoundNodeType BoundNode => BoundNodeType.BinaryExpression;
-        public Type Type => Left.Type;
+        public Type Type => BoundOperator.ReturnType;
 
         public IBoundExpression Left { get; }
-        public BoundBinaryOperatorType OperatorType { get; }
+        public BoundBinaryOperator BoundOperator { get; }
         public IBoundExpression Right { get; }
     }
 }

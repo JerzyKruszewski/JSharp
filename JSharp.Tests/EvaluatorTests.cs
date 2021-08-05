@@ -26,6 +26,9 @@ namespace JSharp.Tests
         [TestCase(-6, "-(2*3)", Ignore = "Broken support for ()")]
         [TestCase(-6, "-2*3")]
         [TestCase(1, "+--+1")]
+        [TestCase(1, "3/2-1/2")]
+        [TestCase(0.5, "3/2-2/2")]
+        [TestCase(7, "1 + 2 * 3")]
         public void Evaluate_WhenCalledWithMathematicalExpression_ReturnResult(double expected, string text, double epsilon = 0.00001)
         {
             Parser parser = new Parser(text);
