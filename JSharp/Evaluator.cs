@@ -52,11 +52,6 @@ namespace JSharp
                 return PerformOperation(left, binary.BoundOperator.OperatorType, right);
             }
 
-            //if (expression is ParenthesizedExpressionSyntax parenthesized)
-            //{
-            //    return EvaluateExpression(parenthesized.Expression);
-            //}
-
             throw new Exception($"Unexpected expression {expression.BoundNode}");
         }
 

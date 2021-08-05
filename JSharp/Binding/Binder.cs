@@ -25,6 +25,7 @@ namespace JSharp.Binding
                 TokenType.LiteralExpression => BindLiteralExpression((LiteralExpressionSyntax)syntax),
                 TokenType.UnaryExpression => BindUnaryExpression((UnaryExpressionSyntax)syntax),
                 TokenType.BinaryExpression => BindBinaryExpression((BinaryExpressionSyntax)syntax),
+                TokenType.ParenthesizedExpression => BindExpression(((ParenthesizedExpressionSyntax)syntax).Expression),
                 _ => throw new ArgumentException($"Unexpected token type {syntax.TokenType} of object {nameof(syntax)}")
             };
         }
