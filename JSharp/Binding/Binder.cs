@@ -14,9 +14,9 @@ namespace JSharp.Binding
 {
     public class Binder
     {
-        private readonly IList<string> _errors = new List<string>();
+        private readonly DiagnosticBag _diagnostics = new DiagnosticBag();
 
-        public IEnumerable<string> Errors => _errors;
+        public DiagnosticBag Diagnostics => _diagnostics;
 
         public IBoundExpression BindExpression(IExpressionSyntax syntax)
         {
@@ -44,7 +44,10 @@ namespace JSharp.Binding
 
             if (boundOperator is null)
             {
-                _errors.Add($"BINDER ERROR: Unary oparator '{syntax.OperatorToken.Text}' is not defined for type {boundOperand.Type}");
+                _diagnostics.ReportUndefinedOperator(syntax.OperatorToken.Span,
+                                                     syntax.OperatorToken.Text,
+                                                     boundOperand.Type,
+                                                     source: "BINDER");
                 return boundOperand;
             }
 
@@ -59,7 +62,11 @@ namespace JSharp.Binding
 
             if (boundOperator is null)
             {
-                _errors.Add($"BINDER ERROR: Unary oparator '{syntax.OperatorToken.Text}' is not defined for types {boundLeft.Type} or {boundRight.Type}");
+                _diagnostics.ReportUndefinedOperator(syntax.OperatorToken.Span,
+                                                     syntax.OperatorToken.Text,
+                                                     boundLeft.Type,
+                                                     boundRight.Type,
+                                                     source: "BINDER");
                 return boundLeft;
             }
 

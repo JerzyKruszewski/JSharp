@@ -33,16 +33,44 @@ namespace JSharp.Syntax
             }
         }
 
-        public static void LogErrors(IEnumerable<string> errors)
+        public static void LogErrors(string line, IEnumerable<Diagnostic> diagnostics)
         {
             Console.ForegroundColor = ConsoleColor.DarkRed;
 
-            foreach (string error in errors)
+            foreach (Diagnostic diagnostic in diagnostics)
             {
-                Console.WriteLine(error);
+                Console.WriteLine(diagnostic.ToString());
+                Console.ResetColor();
+
+                PrintExactError(line, diagnostic);
             }
 
             Console.ResetColor();
+        }
+
+        private static void PrintExactError(string line, Diagnostic diagnostic)
+        {
+            string prefix;
+            string error;
+            string suffix;
+
+            try
+            {
+                prefix = line.Substring(0, diagnostic.Span.Start);
+                error = line.Substring(diagnostic.Span.Start, diagnostic.Span.Length);
+                suffix = line[diagnostic.Span.End..];
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                return;
+            }
+
+            Console.Write(prefix);
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.Write(error);
+            Console.ResetColor();
+            Console.WriteLine(suffix);
+            Console.ForegroundColor = ConsoleColor.DarkRed;
         }
     }
 }

@@ -13,18 +13,14 @@ namespace JSharp.Syntax
     {
         private readonly string _text;
         private int _position;
-#if DEBUG
-        private readonly IList<string> _errors = new List<string>();
-#endif
+        private readonly DiagnosticBag _diagnostics = new DiagnosticBag();
 
         public Lexer(string text)
         {
             _text = text;
         }
 
-#if DEBUG
-        public IEnumerable<string> Errors => _errors;
-#endif
+        public DiagnosticBag Diagnostics => _diagnostics;
 
         private char Current => Peek(0);
 
@@ -45,12 +41,10 @@ namespace JSharp.Syntax
             {
                 consumedToken = NextToken();
 
-#if DEBUG
                 if (consumedToken.TokenType == TokenType.BadToken)
                 {
-                    _errors.Add($"LEXER ERROR: {consumedToken.TokenType} '{consumedToken.Text}' at {consumedToken.Position}");
+                    _diagnostics.ReportBadToken(consumedToken.Position, consumedToken.Text, source: "LEXER");
                 }
-#endif
 
                 tokens.Add(consumedToken);
             } while (consumedToken.TokenType != TokenType.EndOfFileToken);
@@ -67,12 +61,10 @@ namespace JSharp.Syntax
             {
                 consumedToken = NextToken();
 
-#if DEBUG
                 if (consumedToken.TokenType == TokenType.BadToken)
                 {
-                    _errors.Add($"LEXER ERROR: {consumedToken.TokenType} '{consumedToken.Text}' at {consumedToken.Position}");
+                    _diagnostics.ReportBadToken(consumedToken.Position, consumedToken.Text, source: "LEXER");
                 }
-#endif
 
                 if (!excludedTokens.Contains(consumedToken.TokenType))
                 {
@@ -153,7 +145,7 @@ namespace JSharp.Syntax
 
             if (!int.TryParse(text, out int value))
             {
-                _errors.Add($"LEXER ERROR: Text {text} is not parseable to Int32");
+                _diagnostics.ReportInvalidType(new TextSpan(startPos, length), text, typeof(int), source: "LEXER");
             }
 
             return new SyntaxToken(TokenType.NumberToken, startPos, text, value);

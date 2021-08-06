@@ -25,21 +25,18 @@ namespace JSharpCompiler
 
             Parser parser = new Parser(line);
             SyntaxTree tree = parser.Parse();
-            Binder binder = new Binder();
-            IBoundExpression boundExpression = binder.BindExpression(tree.Root);
+            Compilation compilation = new Compilation(tree);
+            EvaluationResult result = compilation.Evaluate();
+
             Utilities.PrintTree(tree.Root);
 
-            IEnumerable<string> errors = tree.Errors.Concat(binder.Errors);
-            
-            if (errors.Any())
+            if (result.Diagnostics.Any())
             {
-                Utilities.LogErrors(errors);
+                Utilities.LogErrors(line, result.Diagnostics);
                 return;
             }
 
-            Evaluator evaluator = new Evaluator(boundExpression);
-
-            Console.WriteLine(evaluator.Evaluate());
+            Console.WriteLine(result.Value);
         }
     }
 }

@@ -13,28 +13,24 @@ namespace JSharp.Syntax
     {
         private readonly SyntaxToken[] _tokens;
         private int _position;
-#if DEBUG
-        private readonly List<string> _errors = new List<string>();
-#endif
+        private readonly DiagnosticBag _diagnostics = new DiagnosticBag();
 
         public Parser(string text)
         {
             Lexer lexer = new Lexer(text);
             _tokens = lexer.GetFilteredTokens(TokenType.WhiteSpaceToken, TokenType.BadToken)
                            .ToArray();
-            _errors.AddRange(lexer.Errors);
+            _diagnostics.AddRange(lexer.Diagnostics);
         }
 
         private SyntaxToken Current => Peek(0);
-#if DEBUG
-        public IEnumerable<string> Errors => _errors;
-#endif
+        public DiagnosticBag Diagnostics => _diagnostics;
 
         public SyntaxTree Parse()
         {
             IExpressionSyntax expression = ParseExpression();
             SyntaxToken endOfFile = MatchToken(TokenType.EndOfFileToken);
-            return new SyntaxTree(_errors, expression, endOfFile);
+            return new SyntaxTree(_diagnostics, expression, endOfFile);
         }
 
         private IExpressionSyntax ParseExpression(int parentPrecedence = 0)
@@ -116,7 +112,7 @@ namespace JSharp.Syntax
                 return NextToken();
             }
 
-            _errors.Add($"PARSER ERROR: Unexpected token {Current.TokenType} at {Current.Position} (Expected: {token})");
+            _diagnostics.ReportUnexpectedToken(Current.Span, Current.TokenType, token, source: "PARSER");
             return new SyntaxToken(token, Current.Position, null, null);
         }
 

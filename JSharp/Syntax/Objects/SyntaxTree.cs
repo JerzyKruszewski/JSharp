@@ -9,14 +9,14 @@ namespace JSharp.Syntax.Objects
 {
     public class SyntaxTree
     {
-        public SyntaxTree(IEnumerable<string> errors, IExpressionSyntax root, SyntaxToken endOfFileToken)
+        public SyntaxTree(IEnumerable<Diagnostic> diagnostics, IExpressionSyntax root, SyntaxToken endOfFileToken)
         {
-            Errors = errors;
+            Diagnostics = diagnostics;
             Root = root;
             EndOfFileToken = endOfFileToken;
         }
 
-        public IEnumerable<string> Errors { get; }
+        public IEnumerable<Diagnostic> Diagnostics { get; }
         public IExpressionSyntax Root { get; }
         public SyntaxToken EndOfFileToken { get; }
     }
