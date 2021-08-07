@@ -51,6 +51,13 @@ namespace JSharp
             Report(span, message);
         }
 
+
+        public  void ReportUndefinedVariableName(TextSpan span, string name, string source)
+        {
+            string message = $"{source} ERROR: Undefined variable with name {name}";
+            Report(span, message);
+        }
+
         private void Report(TextSpan span, string message)
         {
             _diagnostics.Add(new Diagnostic(span, message));

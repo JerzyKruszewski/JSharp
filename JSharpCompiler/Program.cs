@@ -16,27 +16,34 @@ namespace JSharpCompiler
     {
         private static void Main()
         {
-            Console.Write("> ");
-            string line = Console.ReadLine();
-            if (string.IsNullOrWhiteSpace(line))
+            Dictionary<string, object> variables = new Dictionary<string, object>();
+
+            while (true)
             {
-                return;
+                Console.Write("> ");
+                string line = Console.ReadLine();
+                if (string.IsNullOrWhiteSpace(line))
+                {
+                    return;
+                }
+
+                Parser parser = new Parser(line);
+                SyntaxTree tree = parser.Parse();
+                Compilation compilation = new Compilation(tree);
+                EvaluationResult result = compilation.Evaluate(variables);
+
+                Utilities.PrintTree(tree.Root);
+
+                if (result.Diagnostics.Any())
+                {
+                    Utilities.LogErrors(line, result.Diagnostics);
+                    return;
+                }
+
+                Console.WriteLine(result.Value);
+
+                Console.WriteLine();
             }
-
-            Parser parser = new Parser(line);
-            SyntaxTree tree = parser.Parse();
-            Compilation compilation = new Compilation(tree);
-            EvaluationResult result = compilation.Evaluate();
-
-            Utilities.PrintTree(tree.Root);
-
-            if (result.Diagnostics.Any())
-            {
-                Utilities.LogErrors(line, result.Diagnostics);
-                return;
-            }
-
-            Console.WriteLine(result.Value);
         }
     }
 }

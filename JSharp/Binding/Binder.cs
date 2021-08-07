@@ -14,7 +14,13 @@ namespace JSharp.Binding
 {
     public class Binder
     {
+        private readonly IDictionary<string, object> _variables;
         private readonly DiagnosticBag _diagnostics = new DiagnosticBag();
+
+        public Binder(IDictionary<string, object> variables)
+        {
+            _variables = variables;
+        }
 
         public DiagnosticBag Diagnostics => _diagnostics;
 
@@ -26,6 +32,8 @@ namespace JSharp.Binding
                 TokenType.UnaryExpression => BindUnaryExpression((UnaryExpressionSyntax)syntax),
                 TokenType.BinaryExpression => BindBinaryExpression((BinaryExpressionSyntax)syntax),
                 TokenType.ParenthesizedExpression => BindExpression(((ParenthesizedExpressionSyntax)syntax).Expression),
+                TokenType.NameExpression => BindNameExpression((NameExpressionSyntax)syntax),
+                TokenType.AssignmentExpression => BindAssignmentExpression((AssignmentExpressionSyntax)syntax),
                 _ => throw new ArgumentException($"Unexpected token type {syntax.TokenType} of object {nameof(syntax)}")
             };
         }
@@ -71,6 +79,27 @@ namespace JSharp.Binding
             }
 
             return new BoundBinaryExpression(boundLeft, boundOperator, boundRight);
+        }
+
+        private IBoundExpression BindNameExpression(NameExpressionSyntax syntax)
+        {
+            string name = syntax.IdentifierToken.Text;
+
+            if (!_variables.TryGetValue(name, out object value))
+            {
+                _diagnostics.ReportUndefinedVariableName(syntax.IdentifierToken.Span, name, source: "BINDER");
+            }
+
+            Type type = value?.GetType() ?? typeof(object);
+
+            return new BoundVariableExperssion(name, type);
+        }
+
+        private IBoundExpression BindAssignmentExpression(AssignmentExpressionSyntax syntax)
+        {
+            string name = syntax.IdentifierToken.Text;
+            IBoundExpression boundExpression = BindExpression(syntax.Expression);
+            return new BoundAssingmentExpression(name, boundExpression);
         }
     }
 }

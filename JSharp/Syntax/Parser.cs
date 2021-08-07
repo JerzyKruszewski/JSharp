@@ -33,7 +33,27 @@ namespace JSharp.Syntax
             return new SyntaxTree(_diagnostics, expression, endOfFile);
         }
 
-        private IExpressionSyntax ParseExpression(int parentPrecedence = 0)
+        private IExpressionSyntax ParseExpression()
+        {
+            return ParseAssignmentExpression();
+        }
+
+        private IExpressionSyntax ParseAssignmentExpression()
+        {
+            if (Current.TokenType == TokenType.IdentifierToken &&
+                Peek(1).TokenType == TokenType.EqualsToken)
+            {
+                SyntaxToken identifierToken = NextToken();
+                SyntaxToken operatorToken = NextToken();
+                IExpressionSyntax right = ParseAssignmentExpression();
+
+                return new AssignmentExpressionSyntax(identifierToken, operatorToken, right);
+            }
+
+            return ParseBinaryExpression();
+        }
+
+        private IExpressionSyntax ParseBinaryExpression(int parentPrecedence = 0)
         {
             IExpressionSyntax left = HandleUnaryExpression(parentPrecedence);
 
@@ -47,7 +67,7 @@ namespace JSharp.Syntax
                 }
 
                 SyntaxToken operatorToken = NextToken();
-                IExpressionSyntax right = ParseExpression(precedence);
+                IExpressionSyntax right = ParseBinaryExpression(precedence);
                 left = new BinaryExpressionSyntax(left, operatorToken, right);
             }
         }
@@ -59,7 +79,7 @@ namespace JSharp.Syntax
             if (unaryPrecedence != 0 && unaryPrecedence >= parentPrecedence)
             {
                 SyntaxToken oparatorToken = NextToken();
-                IExpressionSyntax operand = ParseExpression(unaryPrecedence);
+                IExpressionSyntax operand = ParseBinaryExpression(unaryPrecedence);
                 return new UnaryExpressionSyntax(oparatorToken, operand);
             }
 
@@ -87,6 +107,11 @@ namespace JSharp.Syntax
                     bool value = keywordToken.TokenType == TokenType.TrueKeyword;
 
                     return new LiteralExpressionSyntax(keywordToken, value);
+                }
+                case TokenType.IdentifierToken:
+                {
+                    SyntaxToken identifierToken = NextToken();
+                    return new NameExpressionSyntax(identifierToken);
                 }
                 default:
                     return new LiteralExpressionSyntax(MatchToken(TokenType.NumberToken));

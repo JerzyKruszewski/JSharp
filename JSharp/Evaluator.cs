@@ -15,10 +15,12 @@ namespace JSharp
     public class Evaluator
     {
         private readonly IBoundExpression _root;
+        private readonly IDictionary<string, object> _variables;
 
-        public Evaluator(IBoundExpression root)
+        public Evaluator(IBoundExpression root, IDictionary<string, object> variables)
         {
             _root = root;
+            _variables = variables;
         }
 
         public object Evaluate()
@@ -31,6 +33,18 @@ namespace JSharp
             if (expression is BoundLiteralExpression number)
             {
                 return number.Value;
+            }
+
+            if (expression is BoundVariableExperssion variable)
+            {
+                return _variables[variable.Name];
+            }
+
+            if (expression is BoundAssingmentExpression assingment)
+            {
+                object value = EvaluateExpression(assingment.Expression);
+                _variables[assingment.Name] = value;
+                return value;
             }
 
             if (expression is BoundUnaryExpression unary)

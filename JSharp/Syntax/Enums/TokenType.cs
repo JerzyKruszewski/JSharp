@@ -27,15 +27,21 @@ namespace JSharp.Syntax.Enums
         PipePipeToken,
         EqualsEqualsToken,
         BangEqualsToken,
+        EqualsToken,
 
         //Keywords
         TrueKeyword,
         FalseKeyword,
+        IntVariableKeyword,
+        BoolVariableKeyword,
+        ObjectVariableKeyword,
 
         //Expressions
         LiteralExpression,
+        NameExpression,
+        AssignmentExpression,
+        UnaryExpression,
         BinaryExpression,
-        ParenthesizedExpression,
-        UnaryExpression
+        ParenthesizedExpression
     }
 }

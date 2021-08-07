@@ -33,10 +33,10 @@ namespace JSharp.Tests
         {
             Parser parser = new Parser(text);
             SyntaxTree tree = parser.Parse();
-            Binder binder = new Binder();
+            Binder binder = new Binder(null);
             IBoundExpression boundExpression = binder.BindExpression(tree.Root);
 
-            double actual = Convert.ToDouble(new Evaluator(boundExpression).Evaluate());
+            double actual = Convert.ToDouble(new Evaluator(boundExpression, null).Evaluate());
 
             Assert.AreEqual(expected, actual, epsilon);
         }
@@ -73,10 +73,10 @@ namespace JSharp.Tests
         {
             Parser parser = new Parser(text);
             SyntaxTree tree = parser.Parse();
-            Binder binder = new Binder();
+            Binder binder = new Binder(null);
             IBoundExpression boundExpression = binder.BindExpression(tree.Root);
 
-            bool actual = (bool)(new Evaluator(boundExpression).Evaluate());
+            bool actual = (bool)(new Evaluator(boundExpression, null).Evaluate());
 
             Assert.AreEqual(expected, actual);
         }

@@ -132,6 +132,7 @@ namespace JSharp.Syntax
                 '(' => new SyntaxToken(TokenType.OpenParenthesesToken, _position++, "(", null),
                 ')' => new SyntaxToken(TokenType.CloseParenthesesToken, _position++, ")", null),
                 '!' => new SyntaxToken(TokenType.BangToken, _position++, "!", null),
+                '=' => new SyntaxToken(TokenType.EqualsToken, _position++, "=", null),
                 _ => new SyntaxToken(TokenType.BadToken, _position++, _text.Substring(_position - 1, 1), null)
             };
         }

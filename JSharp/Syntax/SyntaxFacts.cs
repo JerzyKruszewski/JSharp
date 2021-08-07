@@ -39,7 +39,10 @@ namespace JSharp.Syntax
             {
                 "true" => TokenType.TrueKeyword,
                 "false" => TokenType.FalseKeyword,
-                _ => throw new ArgumentException($"Unknown keyword: {text}")
+                "int" => TokenType.IntVariableKeyword,
+                "bool" => TokenType.BoolVariableKeyword,
+                "object" => TokenType.ObjectVariableKeyword,
+                _ => TokenType.IdentifierToken
             };
         }
     }
