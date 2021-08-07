@@ -97,24 +97,30 @@ namespace JSharp.Syntax
                 return HandleLetter();
             }
 
+            int startPos = _position;
+
             if (Current == '&' && LookAhead == '&')
             {
-                return new SyntaxToken(TokenType.AmpersandAmpersandToken, _position += 2, "&&", null);
+                _position += 2;
+                return new SyntaxToken(TokenType.AmpersandAmpersandToken, startPos, "&&", null);
             }
 
             if (Current == '|' && LookAhead == '|')
             {
-                return new SyntaxToken(TokenType.PipePipeToken, _position += 2, "||", null);
+                _position += 2;
+                return new SyntaxToken(TokenType.PipePipeToken, startPos, "||", null);
             }
 
             if (Current == '=' && LookAhead == '=')
             {
-                return new SyntaxToken(TokenType.EqualsEqualsToken, _position += 2, "==", null);
+                _position += 2;
+                return new SyntaxToken(TokenType.EqualsEqualsToken, startPos, "==", null);
             }
 
             if (Current == '!' && LookAhead == '=')
             {
-                return new SyntaxToken(TokenType.BangEqualsToken, _position += 2, "!=", null);
+                _position += 2;
+                return new SyntaxToken(TokenType.BangEqualsToken, startPos, "!=", null);
             }
 
             return Current switch
