@@ -14,10 +14,10 @@ namespace JSharp.Binding
 {
     public class Binder
     {
-        private readonly IDictionary<string, object> _variables;
+        private readonly IDictionary<string, Variable> _variables;
         private readonly DiagnosticBag _diagnostics = new DiagnosticBag();
 
-        public Binder(IDictionary<string, object> variables)
+        public Binder(IDictionary<string, Variable> variables)
         {
             _variables = variables;
         }
@@ -32,6 +32,7 @@ namespace JSharp.Binding
                 TokenType.UnaryExpression => BindUnaryExpression((UnaryExpressionSyntax)syntax),
                 TokenType.BinaryExpression => BindBinaryExpression((BinaryExpressionSyntax)syntax),
                 TokenType.ParenthesizedExpression => BindExpression(((ParenthesizedExpressionSyntax)syntax).Expression),
+                TokenType.DefinitionExpression => BindDefinitionExpression((DefinitionExpressionSyntax)syntax),
                 TokenType.NameExpression => BindNameExpression((NameExpressionSyntax)syntax),
                 TokenType.AssignmentExpression => BindAssignmentExpression((AssignmentExpressionSyntax)syntax),
                 _ => throw new ArgumentException($"Unexpected token type {syntax.TokenType} of object {nameof(syntax)}")
@@ -81,16 +82,30 @@ namespace JSharp.Binding
             return new BoundBinaryExpression(boundLeft, boundOperator, boundRight);
         }
 
+        private IBoundExpression BindDefinitionExpression(DefinitionExpressionSyntax syntax)
+        {
+            string name = syntax.IdentifierToken.Text;
+
+            if (_variables.ContainsKey(name))
+            {
+                _diagnostics.ReportVariableAlreadyDefined(syntax.IdentifierToken.Span, name, source: "BINDER");
+            }
+
+            Type type = syntax.VariableType;
+
+            return new BoundVariableDefinitionExpression(name, type);
+        }
+
         private IBoundExpression BindNameExpression(NameExpressionSyntax syntax)
         {
             string name = syntax.IdentifierToken.Text;
 
-            if (!_variables.TryGetValue(name, out object value))
+            if (!_variables.TryGetValue(name, out Variable value))
             {
                 _diagnostics.ReportUndefinedVariableName(syntax.IdentifierToken.Span, name, source: "BINDER");
             }
 
-            Type type = value?.GetType() ?? typeof(object);
+            Type type = value.Type ?? typeof(object);
 
             return new BoundVariableExperssion(name, type);
         }

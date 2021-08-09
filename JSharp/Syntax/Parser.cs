@@ -35,6 +35,35 @@ namespace JSharp.Syntax
 
         private IExpressionSyntax ParseExpression()
         {
+            return ParseDefinitionExpression();
+        }
+
+        private IExpressionSyntax ParseDefinitionExpression()
+        {
+            if (Peek(1).TokenType == TokenType.IdentifierToken)
+            {
+                SyntaxToken variableToken;
+                SyntaxToken identifierToken;
+
+                switch (Current.TokenType)
+                {
+                    case TokenType.IntVariableKeyword:
+                        variableToken = NextToken();
+                        identifierToken = NextToken();
+                        return new DefinitionExpressionSyntax(variableToken, identifierToken, typeof(int));
+                    case TokenType.BoolVariableKeyword:
+                        variableToken = NextToken();
+                        identifierToken = NextToken();
+                        return new DefinitionExpressionSyntax(variableToken, identifierToken, typeof(bool));
+                    case TokenType.ObjectVariableKeyword:
+                        variableToken = NextToken();
+                        identifierToken = NextToken();
+                        return new DefinitionExpressionSyntax(variableToken, identifierToken, typeof(object));
+                    default:
+                        break;
+                }
+            }
+
             return ParseAssignmentExpression();
         }
 

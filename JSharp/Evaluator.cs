@@ -15,9 +15,9 @@ namespace JSharp
     public class Evaluator
     {
         private readonly IBoundExpression _root;
-        private readonly IDictionary<string, object> _variables;
+        private readonly IDictionary<string, Variable> _variables;
 
-        public Evaluator(IBoundExpression root, IDictionary<string, object> variables)
+        public Evaluator(IBoundExpression root, IDictionary<string, Variable> variables)
         {
             _root = root;
             _variables = variables;
@@ -35,15 +35,38 @@ namespace JSharp
                 return number.Value;
             }
 
+            if (expression is BoundVariableDefinitionExpression definition)
+            {
+                object defaultValue = (definition.Type == typeof(int)) ?
+                                      (object)default(int) :
+                                      (definition.Type == typeof(bool)) ?
+                                      (object)default(bool) :
+                                      default(object);
+
+                _variables.Add(definition.Name, new Variable(defaultValue, definition.Type));
+                return null;
+            }
+
             if (expression is BoundVariableExperssion variable)
             {
-                return _variables[variable.Name];
+                return _variables[variable.Name].Value;
             }
 
             if (expression is BoundAssingmentExpression assingment)
             {
                 object value = EvaluateExpression(assingment.Expression);
-                _variables[assingment.Name] = value;
+
+                if (!_variables.ContainsKey(assingment.Name))
+                {
+                    return null;
+                }
+
+                if (_variables[assingment.Name].Type != value.GetType())
+                {
+                    return null;
+                }
+
+                _variables[assingment.Name] = new Variable(value, _variables[assingment.Name].Type); ;
                 return value;
             }
 

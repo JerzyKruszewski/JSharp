@@ -16,7 +16,7 @@ namespace JSharpCompiler
     {
         private static void Main()
         {
-            Dictionary<string, object> variables = new Dictionary<string, object>();
+            Dictionary<string, Variable> variables = new Dictionary<string, Variable>();
 
             while (true)
             {

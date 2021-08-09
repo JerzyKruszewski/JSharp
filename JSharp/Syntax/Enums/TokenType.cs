@@ -38,6 +38,7 @@ namespace JSharp.Syntax.Enums
 
         //Expressions
         LiteralExpression,
+        DefinitionExpression,
         NameExpression,
         AssignmentExpression,
         UnaryExpression,

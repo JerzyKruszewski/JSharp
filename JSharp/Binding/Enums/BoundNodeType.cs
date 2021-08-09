@@ -9,6 +9,7 @@ namespace JSharp.Binding.Enums
     public enum BoundNodeType
     {
         LiteralExpression,
+        DefinitionExpression,
         VariableExpression,
         AssignmentExpression,
         UnaryExpression,

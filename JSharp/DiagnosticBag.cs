@@ -58,6 +58,12 @@ namespace JSharp
             Report(span, message);
         }
 
+        public void ReportVariableAlreadyDefined(TextSpan span, string name, string source)
+        {
+            string message = $"{source} ERROR: Variable {name} is already defined";
+            Report(span, message);
+        }
+
         private void Report(TextSpan span, string message)
         {
             _diagnostics.Add(new Diagnostic(span, message));

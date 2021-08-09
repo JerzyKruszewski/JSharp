@@ -18,7 +18,7 @@ namespace JSharp
 
         public SyntaxTree Syntax { get; }
 
-        public EvaluationResult Evaluate(IDictionary<string, object> variables)
+        public EvaluationResult Evaluate(IDictionary<string, Variable> variables)
         {
             Binder binder = new Binder(variables);
             IBoundExpression boundExpression = binder.BindExpression(Syntax.Root);
